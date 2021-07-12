@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    id "com.github.johnrengelman.shadow" version "7.0.0"
+}
+
+group 'com.astralsmp'
+version '1.0-barebones'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'}
+    maven { url 'https://m2.dv8tion.net/releases'}
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    compileOnly 'org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT'
+    implementation 'net.dv8tion:JDA:4.3.0_295'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+processResources {
+    filesMatching('plugin.yml') {
+        expand(project.properties)
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding("UTF-8")
+}
