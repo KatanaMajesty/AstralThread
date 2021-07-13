@@ -53,7 +53,11 @@ public class Config {
         }
     }
 
-    public void initDefaults() {
+    /**
+     * Метод инициализирует дефолтные значения в конфиге
+     * Данный метод не должен использоваться в каких-либо инстансах класса
+     */
+    private void initDefaults() {
         if (defaultValues != null) {
             config.addDefaults(defaultValues);
             plugin.getConfig().options().copyDefaults(true);
