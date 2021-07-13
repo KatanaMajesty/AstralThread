@@ -1,0 +1,7 @@
+name: AstralThread
+main: com.astralsmp.AstralThread
+version: ${version}
+api-version: 1.17
+authors:
+  - KatanaMajesty
+  - AleksBl4ckr

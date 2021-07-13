@@ -1,0 +1,6 @@
+com/astralsmp/modules/Discord.java
+ com.astralsmp.modules.Discord
+com/astralsmp/modules/Config.java
+ com.astralsmp.modules.Config
+com/astralsmp/AstralThread.java
+ com.astralsmp.AstralThread
