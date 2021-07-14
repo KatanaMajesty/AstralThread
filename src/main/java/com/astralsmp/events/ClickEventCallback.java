@@ -3,6 +3,7 @@ package com.astralsmp.events;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
@@ -19,6 +20,7 @@ public class ClickEventCallback implements Listener {
 
     private static final Map<UUID, Consumer<Player>> eventMap = new HashMap<>();
 
+    @EventHandler
     public void command(PlayerCommandPreprocessEvent event) {
         if (event.getMessage().startsWith("/astralthread:link")) {
             String message = event.getMessage();

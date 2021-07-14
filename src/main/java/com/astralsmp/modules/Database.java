@@ -3,16 +3,17 @@ package com.astralsmp.modules;
 import org.sqlite.SQLiteDataSource;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Database {
 
-    private final SQLiteDataSource dataSource = new SQLiteDataSource();
+    private static final SQLiteDataSource dataSource = new SQLiteDataSource();
     private final String DB_URL;
 
-    public Database(String db_name) {
-        DB_URL = "jdbc:sqlite:C:/SQLite3/" + db_name;
+    public Database(String dbName) {
+        DB_URL = "jdbc:sqlite:C:/SQLite3/" + dbName;
     }
 
     public void initialize() {
@@ -35,7 +36,23 @@ public class Database {
         Statement statement = connection.createStatement();
         statement.execute(query);
         statement.close();
+    }
 
+    public static void insertValues(Object[] userInfo, String tableName) {
+        if (!dataSource.getUrl().isEmpty()) {
+            try (Connection connection = dataSource.getConnection()) {
+                String query = "INSERT INTO " + tableName + " (uuid, display_name, discord_id) VALUES (?, ?, ?)";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setObject(1, userInfo[0]);
+                statement.setObject(2, userInfo[1]);
+                statement.setObject(3, userInfo[2]);
+                statement.executeUpdate();
+                System.out.println("Данные добавлены в бд");
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+                System.out.println("Не удалось добавить значения");
+            }
+        } else System.out.println("Ссылка на бд пуста");
     }
 
 }
