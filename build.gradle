@@ -17,6 +17,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     compileOnly 'org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT'
     implementation 'net.dv8tion:JDA:4.3.0_295'
+    implementation 'org.xerial:sqlite-jdbc:3.34.0'
 }
 
 test {

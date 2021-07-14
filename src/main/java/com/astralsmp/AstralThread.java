@@ -1,6 +1,8 @@
 package com.astralsmp;
 
+import com.astralsmp.events.ClickEventCallback;
 import com.astralsmp.modules.Config;
+import com.astralsmp.modules.Database;
 import com.astralsmp.modules.Discord;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,6 +32,13 @@ public class AstralThread extends JavaPlugin {
         // Дискорд секция (низкий приоритет инициализации)
         discord = new Discord();
         discord.initialize("ODYyNzU2MTIxMTc2NDQwODMz.YOc-QA.3wieV86V8kDCGzhzuiuTHTL9GkE");
+
+        // БД Секция
+        Database database = new Database("astraldatabase.db");
+        database.initialize();
+
+        // Майнкрафт ивенты
+        getServer().getPluginManager().registerEvents(new ClickEventCallback(), this);
     }
 
     @Override

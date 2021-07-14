@@ -1,5 +1,6 @@
 package com.astralsmp.modules;
 
+import com.astralsmp.events.DiscordLink;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -9,6 +10,7 @@ import javax.security.auth.login.LoginException;
 
 public class Discord {
 
+    public static final char PREFIX = '!';
     private JDA jda;
 
     public void initialize(String token) {
@@ -17,6 +19,7 @@ public class Discord {
                     .setStatus(OnlineStatus.DO_NOT_DISTURB)
                     .setActivity(Activity.listening("Гран-Куражъ"))
                     .build();
+            jda.addEventListener(new DiscordLink());
             jda.awaitReady();
             System.out.println("Дискорд бот запущен");
         } catch (LoginException | InterruptedException exception) {
