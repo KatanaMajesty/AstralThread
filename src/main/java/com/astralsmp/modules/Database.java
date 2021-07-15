@@ -2,10 +2,7 @@ package com.astralsmp.modules;
 
 import org.sqlite.SQLiteDataSource;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Database {
 
@@ -31,7 +28,7 @@ public class Database {
     private void tableCreation(Connection connection) throws SQLException {
         // astral linked players table
         String query = "CREATE TABLE IF NOT EXISTS astral_linked_players (" +
-                "uuid TEXT, display_name VARCHAR(16), discord_id DECIMAL(18,0)" +
+                "uuid UUID, display_name VARCHAR(16), discord_id DECIMAL(18,0)" +
                 ");";
         Statement statement = connection.createStatement();
         statement.execute(query);
@@ -53,6 +50,56 @@ public class Database {
                 System.out.println("Не удалось добавить значения");
             }
         } else System.out.println("Ссылка на бд пуста");
+    }
+
+    /**
+     *
+     * @param expression выражение вида "cell = ?"
+     * @param tableName имя таблицы, в которой нужно искать значение
+     */
+    public static boolean containsValue(String expression, String tableName) {
+        if (dataSource.getUrl().isEmpty()) throw new NullPointerException();
+
+        try (Connection connection = dataSource.getConnection()) {
+            String query = "SELECT * FROM " + tableName + " WHERE " + expression;
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            return resultSet.next();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+            System.out.println("Не удалось получить значения");
+            return false;
+        }
+    }
+
+    public static Object getObject(String select, String where, String from) {
+        if (dataSource.getUrl().isEmpty()) throw new NullPointerException();
+
+        try (Connection connection = dataSource.getConnection()) {
+            String query = String.format("SELECT %s FROM %s WHERE %s", select, from, where);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            Object resultSetObject = resultSet.getObject(1);
+            if (resultSetObject != null) return resultSetObject;
+            throw new NullPointerException();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+            System.out.println("Не удалось получить значения");
+            return null;
+        }
+    }
+
+    public static void execute(String query) {
+        if (dataSource.getUrl().isEmpty()) throw new NullPointerException();
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(query);
+            System.out.println(statement.executeUpdate());
+            System.out.println("Очищено!");
+            statement.close();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+            System.out.println("Не удалось получить значения");
+        }
     }
 
 }

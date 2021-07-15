@@ -16,7 +16,7 @@ public class Config {
 
     private Map<String, Object> defaultValues;
     private final Plugin plugin;
-    private final FileConfiguration config;
+    private static FileConfiguration config;
 
     public Config(Plugin plugin) {
         this.plugin = plugin;
@@ -74,6 +74,17 @@ public class Config {
      */
     public void setDefaultValues(Map<String, Object> defaultValues) {
         this.defaultValues = defaultValues;
+    }
+
+    /**
+     * Вызывать только при инициализированном конфиге!
+     *
+     * @return возвращает класс FileConfiguration для получения значений из конфига
+     * @throws NullPointerException при config == null
+     */
+    public static FileConfiguration getConfig() {
+        if (config != null) return config;
+        else throw new NullPointerException();
     }
 
 }

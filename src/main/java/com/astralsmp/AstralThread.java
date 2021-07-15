@@ -16,18 +16,29 @@ import java.util.Map;
  */
 public class AstralThread extends JavaPlugin {
 
+    public static final char PREFIX = '!';
     private Discord discord;
+    private static Config config;
+
+    public static String GREEN_COLOR;
+    public static String RED_COLOR;
+    public static String YELLOW_COLOR;
 
     @Override
     public void onEnable() {
         // Секция для конфигурации (должна быть в первом приоритете)
-        Config config = new Config(this);
+        config = new Config(this);
         Map<String, Object> defaultValues = new HashMap<>();
         defaultValues.put("color_palette.green", "#21db37");
         defaultValues.put("color_palette.red", "#fc3535");
         defaultValues.put("color_palette.yellow", "#f5c720");
         config.setDefaultValues(defaultValues);
         config.initialize();
+
+        // Получение переменных от дефолтных значений
+        GREEN_COLOR = getConfig().getString("color_palette.green");
+        RED_COLOR = getConfig().getString("color_palette.red");
+        YELLOW_COLOR = getConfig().getString("color_palette.yellow");
 
         // Дискорд секция (низкий приоритет инициализации)
         discord = new Discord();
@@ -47,5 +58,4 @@ public class AstralThread extends JavaPlugin {
             discord.unregister();
         }
     }
-
 }
