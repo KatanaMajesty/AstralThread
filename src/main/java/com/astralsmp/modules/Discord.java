@@ -18,7 +18,7 @@ public class Discord {
         try {
             jda = JDABuilder.createDefault(token)
                     .setStatus(OnlineStatus.DO_NOT_DISTURB)
-                    .setActivity(Activity.listening("Гран-Куражъ"))
+                    .setActivity(Activity.listening(Config.getConfig().getString("discord.init.activity")))
                     .build();
             jda.addEventListener(new DiscordLink());
             jda.addEventListener(new DiscordUnlink());

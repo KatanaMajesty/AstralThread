@@ -2,8 +2,11 @@ package com.astralsmp.commands;
 
 import com.astralsmp.AstralThread;
 import com.astralsmp.events.ClickEventCallback;
+import com.astralsmp.modules.Config;
 import com.astralsmp.modules.Database;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -15,6 +18,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -36,17 +41,21 @@ public class DiscordUnlink extends ListenerAdapter {
 
     /**
      * Метод - команда отвязки Майнкрафта от Дискорда через последний
+     *
      * @param event вызывает метод при любом написанном сообщении в Дискорде
      */
     @SuppressWarnings("ConstantConditions")
-    @Override public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+    @Override
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         // Если сообщение == !отвязать
         if (event.getMessage().getContentRaw().equals(AstralThread.PREFIX + "отвязать")) {
             User sender = event.getAuthor();
             MessageChannel channel = event.getChannel();
             // Проверка на наличие discord id в базе данных
             if (!Database.containsValue("discord_id = " + sender.getId(), "astral_linked_players")) {
-                channel.sendMessage(sender.getName() + ", мне не удалось найти привязанный к Вашему дискорду аккаунт.").queue();
+                String message = sender.getName() + ", мне не удалось найти привязанный к Вашему дискорду аккаунт."
+                        .replace("%sender", sender.getName());
+                channel.sendMessageEmbeds(createEmbed(Config.getConfig().getString("discord.command.unlink.title"), "11", sender)).queue();
                 return;
             }
             // Создание игрок от ника из базы данных
@@ -106,5 +115,16 @@ public class DiscordUnlink extends ListenerAdapter {
             TextComponent slash = new TextComponent(" / ");
             target.spigot().sendMessage(unlink, slash, cancel);
         }
+
+    }
+
+    public MessageEmbed createEmbed(String title, String description, User sender) {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setTitle(title);
+        embedBuilder.setDescription(description);
+        embedBuilder.setColor(new Color(67, 191, 90));
+        embedBuilder.setFooter(sender.getAsTag(), sender.getAvatarUrl());
+        embedBuilder.setTimestamp(Instant.now());
+        return embedBuilder.build();
     }
 }

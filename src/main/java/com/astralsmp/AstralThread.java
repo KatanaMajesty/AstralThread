@@ -29,6 +29,10 @@ public class AstralThread extends JavaPlugin {
         // Секция для конфигурации (должна быть в первом приоритете)
         config = new Config(this);
         Map<String, Object> defaultValues = new HashMap<>();
+        defaultValues.put("discord.init.token", "token");
+        defaultValues.put("discord.init.activity", "Мяу мяу");
+        defaultValues.put("discord.command.title", "Отвязка ⌀");
+
         defaultValues.put("color_palette.green", "#21db37");
         defaultValues.put("color_palette.red", "#fc3535");
         defaultValues.put("color_palette.yellow", "#f5c720");
@@ -42,7 +46,7 @@ public class AstralThread extends JavaPlugin {
 
         // Дискорд секция (низкий приоритет инициализации)
         discord = new Discord();
-        discord.initialize("ODYyNzU2MTIxMTc2NDQwODMz.YOc-QA.3wieV86V8kDCGzhzuiuTHTL9GkE");
+        discord.initialize(Config.getConfig().getString("discord.init.token"));
 
         // БД Секция
         Database database = new Database("astraldatabase.db");

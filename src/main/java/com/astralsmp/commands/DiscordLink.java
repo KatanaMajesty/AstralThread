@@ -4,7 +4,9 @@ import com.astralsmp.AstralThread;
 import com.astralsmp.events.ClickEventCallback;
 import com.astralsmp.modules.Config;
 import com.astralsmp.modules.Database;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -17,6 +19,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -144,6 +148,16 @@ public class DiscordLink extends ListenerAdapter {
                 channel.sendMessage("Не 2 аргумента").queue();
             }
         }
+    }
+
+    public MessageEmbed createEmbed(String title, String description, User sender) {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setTitle(title);
+        embedBuilder.setDescription(description);
+        embedBuilder.setColor(new Color(67, 191, 90));
+        embedBuilder.setFooter(sender.getAsTag(), sender.getAvatarUrl());
+        embedBuilder.setTimestamp(Instant.now());
+        return embedBuilder.build();
     }
 
 }
