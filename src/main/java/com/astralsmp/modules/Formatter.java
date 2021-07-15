@@ -1,8 +1,8 @@
 package com.astralsmp.modules;
 
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 
+import java.awt.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,12 +12,12 @@ import java.util.regex.Pattern;
  * Класс используется исключительно для форматтирования текста на сервере майнкрафта
  * Все методы должны возвращать строку
  */
-public class MFormatter {
+public class Formatter {
 
     private static final Pattern HEX_PATTERN = Pattern.compile("&#[a-fA-F_0-9]{6}"); // паттерн {#??????}
 
     /**
-     * @see MFormatter#HEX_PATTERN
+     * @see Formatter#HEX_PATTERN
      * Заменяет паттерн цвета на цвет
      *
      * @param message необработанная строка с паттернами
@@ -38,11 +38,15 @@ public class MFormatter {
     }
 
     /**
-     * Выводит строку в консоль
-     * @param message необработанная строка
+     *
+     * @param colorStr должен соответствовать формату "#ffffff"
+     * @return возвращает new Color формата int, int, int
      */
-    public static void log(String message) {
-        Bukkit.getConsoleSender().sendMessage(colorize(message));
+    public static Color hexColorToRGB(String colorStr) {
+        return new Color(
+                Integer.valueOf( colorStr.substring( 1, 3 ), 16 ),
+                Integer.valueOf( colorStr.substring( 3, 5 ), 16 ),
+                Integer.valueOf( colorStr.substring( 5, 7 ), 16 ) );
     }
 
     /**

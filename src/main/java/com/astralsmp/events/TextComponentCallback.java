@@ -16,12 +16,12 @@ import java.util.function.Consumer;
  * Не создавать инстансы от данного класса
  * Использовать только статические методы
  */
-public class ClickEventCallback implements Listener {
+public class TextComponentCallback implements Listener {
 
     private static final Map<UUID, Consumer<Player>> eventMap = new HashMap<>();
 
     @EventHandler
-    public void command(PlayerCommandPreprocessEvent event) {
+    public void linkCommand(PlayerCommandPreprocessEvent event) {
         if (event.getMessage().startsWith("/astralthread:link")) {
             String message = event.getMessage();
             String[] args = message.split(" ");

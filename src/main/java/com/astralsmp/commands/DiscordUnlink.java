@@ -1,7 +1,8 @@
 package com.astralsmp.commands;
 
 import com.astralsmp.AstralThread;
-import com.astralsmp.events.ClickEventCallback;
+import com.astralsmp.events.TextComponentCallback;
+import com.astralsmp.modules.Formatter;
 import com.astralsmp.modules.Config;
 import com.astralsmp.modules.Database;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -84,9 +85,10 @@ public class DiscordUnlink extends ListenerAdapter {
 
             // Отвязка
             TextComponent unlink = new TextComponent("✔ Отвязать");
-            unlink.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Отвязать аккаунт")));
+            unlink.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                    new Text(Formatter.colorize(String.format("&%sПодтвердить отвязку аккаунтов", AstralThread.GRAY_COLOR)))));
             unlink.setColor(ChatColor.of(AstralThread.RED_COLOR));
-            ClickEventCallback.execute(unlink, p -> {
+            TextComponentCallback.execute(unlink, p -> {
                 if (finished.get()) return;
                 p.sendMessage("Ваш аккаунт более не привязан к " + sender.getAsTag());
                 // Данные для удаления из бд
@@ -100,9 +102,10 @@ public class DiscordUnlink extends ListenerAdapter {
 
             // Отмена отвязки
             TextComponent cancel = new TextComponent("⌀ Отмена");
-            cancel.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Отменить привязку")));
+            cancel.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                    new Text(Formatter.colorize(String.format("&%sОтменить отвязку аккаунтов", AstralThread.GRAY_COLOR)))));
             cancel.setColor(ChatColor.of(AstralThread.YELLOW_COLOR));
-            ClickEventCallback.execute(cancel, p -> {
+            TextComponentCallback.execute(cancel, p -> {
                 if (finished.get()) return;
                 p.sendMessage("Отвязка от аккаунта " + sender.getAsTag() + " была отменена.");
                 channel.sendMessage(sender.getName() + ", отвязка аккаунтов была отменена.").queue();
