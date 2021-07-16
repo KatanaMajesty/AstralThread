@@ -90,7 +90,7 @@ public class DiscordLink extends ListenerAdapter {
                 // Привязка аккаунта - подтверждение
                 TextComponent link = new TextComponent("✔ Привязать");
                 link.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        new Text(Formatter.colorize(String.format("&%sПривязать аккаунт к Дискорду", AstralThread.GRAY_COLOR)))));
+                        new Text(Formatter.colorize(String.format("&%sПривязать аккаунт к Дискорду", AstralThread.GREEN_COLOR)))));
                 link.setColor(ChatColor.of(AstralThread.GREEN_COLOR));
 
                 // Функции при нажатии
@@ -113,7 +113,7 @@ public class DiscordLink extends ListenerAdapter {
                 // Отмена привязки
                 TextComponent cancel = new TextComponent("⌀ Отмена");
                 cancel.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        new Text(Formatter.colorize(String.format("&%sОтменить привязку", AstralThread.GRAY_COLOR))))
+                        new Text(Formatter.colorize(String.format("&%sОтменить привязку", AstralThread.GREEN_COLOR))))
                 );
                 cancel.setColor(ChatColor.of(AstralThread.RED_COLOR));
 
@@ -135,7 +135,7 @@ public class DiscordLink extends ListenerAdapter {
                 // Тут нужно дописать отправку жалобы на спам всем модераторам, которые в сети
                 TextComponent spam = new TextComponent("✎ Спам");
                 spam.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        new Text(Formatter.colorize(String.format("&%sОбозначить попытки привязки спамом", AstralThread.GRAY_COLOR)))));
+                        new Text(Formatter.colorize(String.format("&%sОбозначить попытки привязки спамом", AstralThread.GREEN_COLOR)))));
                 spam.setColor(ChatColor.of(AstralThread.YELLOW_COLOR));
 
                 // Функции при нажатии

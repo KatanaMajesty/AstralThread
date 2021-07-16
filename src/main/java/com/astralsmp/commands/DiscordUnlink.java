@@ -54,16 +54,17 @@ public class DiscordUnlink extends ListenerAdapter {
             MessageChannel channel = event.getChannel();
             // Проверка на наличие discord id в базе данных
             if (!Database.containsValue("discord_id = " + sender.getId(), "astral_linked_players")) {
-                String message = sender.getName() + ", мне не удалось найти привязанный к Вашему дискорду аккаунт."
-                        .replace("%sender", sender.getName());
-                channel.sendMessageEmbeds(createEmbed(Config.getConfig().getString("discord.command.unlink.title"), "11", sender)).queue();
+                 channel.sendMessageEmbeds(createEmbed(Config.getConfig().getString("discord.command.unlink.title"),
+                        Config.getConfig().getString("discord.command.unlink.desc")
+                        .replace("%sender", sender.getName()), sender)).queue();
                 return;
             }
             // Создание игрок от ника из базы данных
             Player target = Bukkit.getPlayer((String) Database.getObject("display_name", "discord_id = " + sender.getId(), "astral_linked_players"));
             // Попытка найти игрока на сервере
             if (target == null) {
-                channel.sendMessage("Вы должны быть на сервере в момент отвязки аккаунтов").queue();
+                channel.sendMessageEmbeds(createEmbed(Config.getConfig().getString("discord.command.unlink.title"),
+                        Config.getConfig().getString("discord.command.notfound"), sender)).queue();
                 return;
             }
 
@@ -73,11 +74,15 @@ public class DiscordUnlink extends ListenerAdapter {
             UUID targetUUID = target.getUniqueId();
             if (!Objects.equals(databaseUUID, targetUUID.toString())) {
                 System.out.println(Database.getObject("uuid", "discord_id = " + sender.getId(), "astral_linked_players"));
-                channel.sendMessage("Данный игрок не привязан к вашему дискорд аккаунту.").queue();
+                channel.sendMessageEmbeds(createEmbed(Config.getConfig().getString("discord.command.unlink.title"),
+                        Config.getConfig().getString("discord.command.unlink.notlinked"),
+                        sender)).queue();
                 return;
             }
             if (UNFINISHED_UNLINKING.contains(targetUUID)) {
-                channel.sendMessage("Вы не завершили предыдущую отвязку аккаунта").queue();
+                channel.sendMessageEmbeds(createEmbed(Config.getConfig().getString("discord.command.unlink.title"),
+                        Config.getConfig().getString("discord.command.unlink.previous"),
+                        sender)).queue();
                 return;
             }
             AtomicReference<Boolean> finished = new AtomicReference<>(false);
@@ -86,14 +91,17 @@ public class DiscordUnlink extends ListenerAdapter {
             // Отвязка
             TextComponent unlink = new TextComponent("✔ Отвязать");
             unlink.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    new Text(Formatter.colorize(String.format("&%sПодтвердить отвязку аккаунтов", AstralThread.GRAY_COLOR)))));
+                    new Text(Formatter.colorize(String.format("&%sПодтвердить отвязку аккаунтов", AstralThread.RED_COLOR)))));
             unlink.setColor(ChatColor.of(AstralThread.RED_COLOR));
             TextComponentCallback.execute(unlink, p -> {
                 if (finished.get()) return;
-                p.sendMessage("Ваш аккаунт более не привязан к " + sender.getAsTag());
+                p.sendMessage(Formatter.colorize(Config.getConfig().getString("discord.command.unlink.minecraft.success")
+                        .replace("%sender", sender.getAsTag())));
                 // Данные для удаления из бд
                 Database.execute("DELETE FROM astral_linked_players WHERE discord_id = " + sender.getId());
-                channel.sendMessage("Успешно отвязано!").queue();
+                channel.sendMessageEmbeds(createEmbed(Config.getConfig().getString("discord.command.unlink.title"),
+                        Config.getConfig().getString("discord.command.unlink.success"),
+                        sender)).queue();
 
                 // чистка
                 UNFINISHED_UNLINKING.remove(targetUUID);
@@ -103,12 +111,15 @@ public class DiscordUnlink extends ListenerAdapter {
             // Отмена отвязки
             TextComponent cancel = new TextComponent("⌀ Отмена");
             cancel.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    new Text(Formatter.colorize(String.format("&%sОтменить отвязку аккаунтов", AstralThread.GRAY_COLOR)))));
+                    new Text(Formatter.colorize(String.format("&%sОтменить отвязку аккаунтов", AstralThread.RED_COLOR)))));
             cancel.setColor(ChatColor.of(AstralThread.YELLOW_COLOR));
             TextComponentCallback.execute(cancel, p -> {
                 if (finished.get()) return;
-                p.sendMessage("Отвязка от аккаунта " + sender.getAsTag() + " была отменена.");
-                channel.sendMessage(sender.getName() + ", отвязка аккаунтов была отменена.").queue();
+                p.sendMessage(Formatter.colorize(Config.getConfig().getString("discord.command.unlink.canceled")
+                        .replace("%sender", sender.getAsTag())));
+                channel.sendMessageEmbeds(createEmbed(Config.getConfig().getString("discord.command.unlink.title"),
+                        Config.getConfig().getString("discord.command.unlink.canceled")
+                        .replace("%sender", sender.getName()), sender)).queue();
 
                 // чистка
                 UNFINISHED_UNLINKING.remove(targetUUID);

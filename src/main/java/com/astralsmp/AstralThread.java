@@ -31,7 +31,17 @@ public class AstralThread extends JavaPlugin {
         Map<String, Object> defaultValues = new HashMap<>();
         defaultValues.put("discord.init.token", "token");
         defaultValues.put("discord.init.activity", "Мяу мяу");
-        defaultValues.put("discord.command.title", "Отвязка ⌀");
+        defaultValues.put("discord.command.unlink.title", "Отвязка ⌀");
+        defaultValues.put("discord.command.unlink.desc", "%sender, мне не удалось найти привязанный к Вашему дискорду аккаунт.");
+        defaultValues.put("discord.command.unlink.notlinked", "Данный игрок не привязан к вашему дискорд аккаунту.");
+        defaultValues.put("discord.command.unlink.previous", "Вы не завершили предыдущую отвязку аккаунта");
+        defaultValues.put("discord.command.unlink.success", "Успешно отвязано!");
+        defaultValues.put("discord.command.unlink.minecraft.success", "Ваш аккаунт более не привязан к %sender");
+        defaultValues.put("discord.command.unlink.minecraft.canceled", "Отвязка от аккаунта %sender была отменена.");
+        defaultValues.put("discord.command.unlink.canceled", "%sender, отвязка аккаунтов была отменена.");
+
+        defaultValues.put("discord.command.notfound", "Вы должны быть на сервере в момент отвязки аккаунтов");
+
 
         defaultValues.put("color_palette.green", "#21db37");
         defaultValues.put("color_palette.red", "#fc3535");
