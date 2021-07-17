@@ -66,6 +66,45 @@ public class Config {
     }
 
     /**
+     * Добавляет дефолтные значения для конфига через карту
+     * @param defaultValues карта K,V со всеми значениями для конфига
+      */
+    public void addDefaults(Map<String, Object> defaultValues) {
+        // Дискорд
+        defaultValues.put("discord.init.token", "token");
+        defaultValues.put("discord.init.activity", "Мяу мяу");
+
+        // Отвязка аккаунтов
+        defaultValues.put("discord.command.unlink.title", "Отвязка аккаунтов");
+        defaultValues.put("discord.command.unlink.no_account", "%sender%, мне не удалось найти привязанный к Вашему дискорду аккаунт.");
+        defaultValues.put("discord.command.unlink.not_linked", "Данный игрок не привязан к вашему дискорд аккаунту.");
+        defaultValues.put("discord.command.unlink.previous", "Вы не завершили предыдущую отвязку аккаунта");
+        defaultValues.put("discord.command.unlink.success", "Успешно отвязано!");
+        defaultValues.put("discord.command.unlink.canceled", "%sender%, отвязка аккаунтов была отменена.");
+        defaultValues.put("discord.command.unlink.minecraft.success", "Ваш аккаунт более не привязан к %sender%");
+        defaultValues.put("discord.command.unlink.minecraft.canceled", "Отвязка от аккаунта %sender% была отменена.");
+
+        // Привязка аккаунтов
+        defaultValues.put("discord.command.link.title", "Привязка аккаунтов");
+        defaultValues.put("discord.command.link.desc", "%sender%, мне не удалось найти привязанный к Вашему дискорду аккаунт.");
+        defaultValues.put("discord.command.link.not_linked", "Данный игрок не привязан к вашему дискорд аккаунту.");
+        defaultValues.put("discord.command.link.previous", "Вы не завершили предыдущую отвязку аккаунта");
+        defaultValues.put("discord.command.link.success", "Успешно отвязано!");
+        defaultValues.put("discord.command.link.canceled", "%sender%, отвязка аккаунтов была отменена.");
+        defaultValues.put("discord.command.link.minecraft.success", "Ваш аккаунт более не привязан к %sender%");
+        defaultValues.put("discord.command.link.minecraft.canceled", "Отвязка от аккаунта %sender% была отменена.");
+
+        // Общие для привязки/отвязки
+        defaultValues.put("discord.command.not_found", "Вы должны быть на сервере в момент отвязки аккаунтов");
+
+        // Цветовая палитра
+        defaultValues.put("color_palette.green", "#21db37");
+        defaultValues.put("color_palette.red", "#fc3535");
+        defaultValues.put("color_palette.yellow", "#f5c720");
+        defaultValues.put("color_palette.gray", "#d1d1d1");
+    }
+
+    /**
      * Позволяет добавлять дефолтные значения в конфиг.
      * Вызывается перед инициализацией конфига
      * @see Config#initialize()

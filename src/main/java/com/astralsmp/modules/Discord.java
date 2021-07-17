@@ -11,14 +11,17 @@ import javax.security.auth.login.LoginException;
 
 public class Discord {
 
+    private static final String ACTIVITY = Config.getConfig().getString("discord.init.activity");
+
     public static final char PREFIX = '!';
-    private JDA jda;
+    public static JDA jda;
 
     public void initialize(String token) {
         try {
+            assert ACTIVITY != null;
             jda = JDABuilder.createDefault(token)
                     .setStatus(OnlineStatus.DO_NOT_DISTURB)
-                    .setActivity(Activity.listening(Config.getConfig().getString("discord.init.activity")))
+                    .setActivity(Activity.listening(ACTIVITY))
                     .build();
             jda.addEventListener(new DiscordLink());
             jda.addEventListener(new DiscordUnlink());

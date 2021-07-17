@@ -1,14 +1,24 @@
-com/astralsmp/modules/Config.java
- com.astralsmp.modules.Config
-com/astralsmp/events/ClickEventCallback.java
- com.astralsmp.events.ClickEventCallback
-com/astralsmp/AstralThread.java
- com.astralsmp.AstralThread
-com/astralsmp/modules/Database.java
- com.astralsmp.modules.Database
+com/astralsmp/events/TextComponentCallback.java
+ com.astralsmp.events.TextComponentCallback
+com/astralsmp/modules/DiscordCooldownManager.java
+ com.astralsmp.modules.DiscordCooldownManager
 com/astralsmp/commands/DiscordUnlink.java
  com.astralsmp.commands.DiscordUnlink
+com/astralsmp/modules/Config.java
+ com.astralsmp.modules.Config
+com/astralsmp/modules/Database.java
+ com.astralsmp.modules.Database
+com/astralsmp/AstralThread.java
+ com.astralsmp.AstralThread
+com/astralsmp/modules/Formatter.java
+ com.astralsmp.modules.Formatter
 com/astralsmp/modules/Discord.java
  com.astralsmp.modules.Discord
+com/astralsmp/events/LinkingPlayerEvents.java
+ com.astralsmp.events.LinkingPlayerEvents
+ com.astralsmp.events.LinkingPlayerEvents$1
+ com.astralsmp.events.LinkingPlayerEvents$2
+ com.astralsmp.events.LinkingPlayerEvents$2$1
+ com.astralsmp.events.LinkingPlayerEvents$3
 com/astralsmp/commands/DiscordLink.java
  com.astralsmp.commands.DiscordLink
