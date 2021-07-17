@@ -33,8 +33,6 @@ public class DiscordLink extends ListenerAdapter {
      */
     public static final Map<UUID, String> UNFINISHED_LINKING = new HashMap<>();
     private static final Map<String, UUID> MINECRAFT_SPAM_MAP = new HashMap<>();
-    // Навести красоту с помощью конфига!
-    private static final FileConfiguration config = Config.getConfig();
     private final DiscordCooldownManager COOLDOWN_MANAGER = new DiscordCooldownManager();
     private final String DATABASE_TABLE = "astral_linked_players";
 
@@ -61,9 +59,13 @@ public class DiscordLink extends ListenerAdapter {
             long timeLeft = System.currentTimeMillis() - COOLDOWN_MANAGER.getCooldown(sender.getId());
             long secondsLeft = TimeUnit.MILLISECONDS.toSeconds(timeLeft);
             if (secondsLeft < DiscordCooldownManager.DEFAULT_COOLDOWN) {
-                channel.sendMessage(
-                        "Подождите " + (DiscordCooldownManager.DEFAULT_COOLDOWN - secondsLeft) + " секунд перед использованием привязки снова"
-                ).queue();
+                int[] formattedLeft = DiscordCooldownManager.splitTimeArray(DiscordCooldownManager.DEFAULT_COOLDOWN - secondsLeft);
+                channel.sendMessage(String.format(
+//                        "Подождите %02d минут(ы) %02d секунд(ы) перед использованием привязки снова", на всякий пусть будет
+                        "Подождите %d минут(ы) %d секунд(ы) перед использованием привязки снова",
+                        formattedLeft[1],
+                        formattedLeft[2]
+                )).queue();
                 return;
             }
             // Место для добавления кд!
@@ -109,17 +111,18 @@ public class DiscordLink extends ListenerAdapter {
             }
             // Обозначение незаконченной привязки
             UNFINISHED_LINKING.put(targetUUID, sender.getId());
-            AtomicReference<Boolean> finished = new AtomicReference<>(false);
+            // Атомное значение типа логический для проверки на нажатые кнопки
+            // Если кнопка была нажата - другие не будут выполнять свой функционал
+            AtomicReference<Boolean> clicked = new AtomicReference<>(false);
 
             // Привязка аккаунта - подтверждение
             TextComponent link = new TextComponent("✔ Привязать");
             link.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(Formatter.colorize("&7Привязать аккаунт к Дискорду"))));
             link.setColor(ChatColor.of(AstralThread.GREEN_COLOR));
-
             // Функции при нажатии
             TextComponentCallback.execute(link, p -> {
                 // Если игрок уже нажал на кнопку и пытается нажать на другую
-                if (finished.get()) return;
+                if (clicked.get()) return;
 
                 // Ответ пользователю в случае отсутствия ошибок
                 p.sendMessage("Ваш аккаунт был успешно привязан к " + sender.getAsTag());
@@ -130,18 +133,17 @@ public class DiscordLink extends ListenerAdapter {
 
                 // Обозначение завершения привязки
                 UNFINISHED_LINKING.remove(targetUUID);
-                finished.set(true);
+                clicked.set(true);
             });
 
             // Отмена привязки
             TextComponent cancel = new TextComponent("⌀ Отмена");
             cancel.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(Formatter.colorize("&7Отменить привязку"))));
             cancel.setColor(ChatColor.of(AstralThread.RED_COLOR));
-
             // Функции при нажатии
             TextComponentCallback.execute(cancel, p -> {
                 // Если игрок уже нажал на кнопку и пытается нажать на другую
-                if (finished.get()) return;
+                if (clicked.get()) return;
 
                 // Ответ пользователю в случае отсутствия ошибок
                 p.sendMessage("Привязка к аккаунту " + sender.getAsTag() + " была отменена.");
@@ -149,7 +151,7 @@ public class DiscordLink extends ListenerAdapter {
 
                 // Обозначение завершения привязки
                 UNFINISHED_LINKING.remove(targetUUID);
-                finished.set(true);
+                clicked.set(true);
             });
 
             // Обозначить спамом
@@ -157,11 +159,10 @@ public class DiscordLink extends ListenerAdapter {
             TextComponent spam = new TextComponent("✎ Спам");
             spam.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(Formatter.colorize("&7Обозначить попытки привязки спамом"))));
             spam.setColor(ChatColor.of(AstralThread.YELLOW_COLOR));
-
             // Функции при нажатии
             TextComponentCallback.execute(spam, p -> {
                 // Если игрок уже нажал на кнопку и пытается нажать на другую
-                if (finished.get()) return;
+                if (clicked.get()) return;
 
                 // Ответ пользователю в случае отсутствия ошибок
                 p.sendMessage("Попытки привязки от данного игрока более Вас не потревожат, модераторы получат уведомление о спаме.");
@@ -169,7 +170,7 @@ public class DiscordLink extends ListenerAdapter {
 
                 // Обозначение завершения привязки
                 UNFINISHED_LINKING.remove(targetUUID);
-                finished.set(true);
+                clicked.set(true);
             });
 
             TextComponent slash = new TextComponent(" / ");

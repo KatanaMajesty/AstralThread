@@ -4,21 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd045536-74c7-4207-b1c7-e673e37933df" name="Default Changelist" comment="Поигрался с эмбедами">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/DiscordCooldownManager.java" afterDir="false" />
+    <list default="true" id="fd045536-74c7-4207-b1c7-e673e37933df" name="Default Changelist" comment="@see">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/astralsmp/AstralThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/astralsmp/AstralThread.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/astralsmp/modules/Config.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/astralsmp/modules/Config.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/astralsmp/modules/Discord.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/astralsmp/modules/Discord.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/AstralThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/AstralThread.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordLink.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordLink.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordUnlink.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordUnlink.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/events/LinkingPlayerEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/events/LinkingPlayerEvents.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/Config.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/Discord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/Discord.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/tasks/discord_bridge.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/tasks/discord_bridge.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/tasks/todo.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/tasks/todo.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/DiscordCooldownManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/DiscordCooldownManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +169,21 @@
       <option name="project" value="LOCAL" />
       <updated>1626386269758</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="КД на использование привязки, немного конфига и структурирования">
+      <created>1626535216519</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1626535216519</updated>
+    </task>
+    <task id="LOCAL-00009" summary="@see">
+      <created>1626535358041</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1626535358041</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -203,6 +206,8 @@
     <MESSAGE value="Discord -&gt; Minecraft bridge 3" />
     <MESSAGE value="Discord -&gt; Minecraft bridge 3-6" />
     <MESSAGE value="Поигрался с эмбедами" />
-    <option name="LAST_COMMIT_MESSAGE" value="Поигрался с эмбедами" />
+    <MESSAGE value="КД на использование привязки, немного конфига и структурирования" />
+    <MESSAGE value="@see" />
+    <option name="LAST_COMMIT_MESSAGE" value="@see" />
   </component>
 </project>
