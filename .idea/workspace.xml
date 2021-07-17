@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd045536-74c7-4207-b1c7-e673e37933df" name="Default Changelist" comment="@see">
+    <list default="true" id="fd045536-74c7-4207-b1c7-e673e37933df" name="Default Changelist" comment="КД доделал">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordLink.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordLink.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/DiscordCooldownManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/DiscordCooldownManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/tasks/discord_bridge.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/tasks/discord_bridge.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,6 +54,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="Record" />
       </list>
     </option>
   </component>
@@ -183,7 +184,14 @@
       <option name="project" value="LOCAL" />
       <updated>1626535358041</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="КД доделал">
+      <created>1626539491567</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1626539491567</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -208,6 +216,7 @@
     <MESSAGE value="Поигрался с эмбедами" />
     <MESSAGE value="КД на использование привязки, немного конфига и структурирования" />
     <MESSAGE value="@see" />
-    <option name="LAST_COMMIT_MESSAGE" value="@see" />
+    <MESSAGE value="КД доделал" />
+    <option name="LAST_COMMIT_MESSAGE" value="КД доделал" />
   </component>
 </project>

@@ -6,14 +6,13 @@ import com.astralsmp.modules.*;
 import com.astralsmp.modules.Formatter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
@@ -46,30 +45,37 @@ public class DiscordLink extends ListenerAdapter {
      * @param event вызывает метод при любом сообщении от пользователя
      */
     @Override
-    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         // Если сообщение равно !привязать
         if (event.getMessage().getContentRaw().startsWith(Discord.PREFIX + "привязать")) {
-            Guild guild = event.getGuild();
             String message = event.getMessage().getContentRaw();
             MessageChannel channel = event.getChannel();
             String[] args = message.split(" ");
             User sender = event.getAuthor();
-
-            // Cooldown manager
-            long timeLeft = System.currentTimeMillis() - COOLDOWN_MANAGER.getCooldown(sender.getId());
-            long secondsLeft = TimeUnit.MILLISECONDS.toSeconds(timeLeft);
-            if (secondsLeft < DiscordCooldownManager.DEFAULT_COOLDOWN) {
-                int[] formattedLeft = DiscordCooldownManager.splitTimeArray(DiscordCooldownManager.DEFAULT_COOLDOWN - secondsLeft);
-                channel.sendMessage(String.format(
+            if (event.getMessage().getEmbeds().isEmpty()) {
+                Member member = event.getMember();
+                // Cooldown manager
+                long timeLeft = System.currentTimeMillis() - COOLDOWN_MANAGER.getCooldown(sender.getId());
+                long secondsLeft = TimeUnit.MILLISECONDS.toSeconds(timeLeft);
+                if (member != null) {
+                    if (!hasRole(member, "741639199861506179")) {
+                        if (secondsLeft < DiscordCooldownManager.DEFAULT_COOLDOWN) {
+                            int[] formattedLeft = DiscordCooldownManager.splitTimeArray(DiscordCooldownManager.DEFAULT_COOLDOWN - secondsLeft);
+                            channel.sendMessage(String.format(
 //                        "Подождите %02d минут(ы) %02d секунд(ы) перед использованием привязки снова", на всякий пусть будет
-                        "Подождите %d минут(ы) %d секунд(ы) перед использованием привязки снова",
-                        formattedLeft[1],
-                        formattedLeft[2]
-                )).queue();
-                return;
+                                    "Подождите %d минут(ы) %d секунд(ы) перед использованием привязки снова",
+                                    formattedLeft[1],
+                                    formattedLeft[2]
+                            )).queue();
+                            return;
+                        }
+                        // Место для добавления кд!
+                        COOLDOWN_MANAGER.setCooldown(sender.getId(), System.currentTimeMillis());
+                    }
+                } else {
+                    System.out.println("Member is null...");
+                }
             }
-            // Место для добавления кд!
-            COOLDOWN_MANAGER.setCooldown(sender.getId(), System.currentTimeMillis());
 
             // Если не 2 аргумента в сообщении
             if (args.length != 2) {
@@ -79,9 +85,25 @@ public class DiscordLink extends ListenerAdapter {
             }
             Player target = Bukkit.getPlayer(args[1]);
             // Если игрок не присутствует на сервере
-            if (target == null) {
+            if (target != null) {
+                // Если игрока нет в вайтлисте сервера
+                // TODO: 17.07.2021 режим гостя позволит игрокам находиться на сервере не будучи в вайтлисте
+                // FIXME: 17.07.2021 проверить на работоспособность на всякий
+                if (Bukkit.getServer().hasWhitelist()) {
+                    if (!target.isWhitelisted()) {
+                        channel.sendMessage("Этот игрок не в вайтлисте сервера").queue();
+                        return;
+                    }
+                }
+            } else {
                 channel.sendMessage("Нет такого игрока на сервере").queue();
                 return;
+            }
+            // Если у игрока нет определённых прав на привязку аккаунта
+            String permission = "astralsmp.link";
+            if (!target.hasPermission(permission)) {
+                channel.sendMessage(String.format("У вас нет прав для привязки своего аккаунта." +
+                        " Обратитесь к модерации за помощью. *Отсутствуют права:* `%s`", permission)).queue();
             }
 
             // Если в бд уже есть привязанный дискорд аккаунт
