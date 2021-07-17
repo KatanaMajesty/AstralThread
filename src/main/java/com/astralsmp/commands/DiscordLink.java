@@ -104,6 +104,7 @@ public class DiscordLink extends ListenerAdapter {
             if (!target.hasPermission(permission)) {
                 channel.sendMessage(String.format("У вас нет прав для привязки своего аккаунта." +
                         " Обратитесь к модерации за помощью. *Отсутствуют права:* `%s`", permission)).queue();
+                return;
             }
 
             // Если в бд уже есть привязанный дискорд аккаунт
