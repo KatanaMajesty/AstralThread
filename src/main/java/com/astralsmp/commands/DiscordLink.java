@@ -15,6 +15,7 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
@@ -28,6 +29,7 @@ public class DiscordLink extends ListenerAdapter {
     /**
      * UNFINISHED_LINKING хранит UUID игрока, который начал привязку аккаунтов, но не закончил её.
      * ОБЯЗАТЕЛЬНО ВЫНОСИТЬ ПОЛЬЗОВАТЕЛЯ ИЗ СПИСКА ПРИ ВЫХОДЕ С СЕРВЕРА!
+     * @see com.astralsmp.events.LinkingPlayerEvents#onLinkingLeave(PlayerQuitEvent) 
      */
     public static final Map<UUID, String> UNFINISHED_LINKING = new HashMap<>();
     private static final Map<String, UUID> MINECRAFT_SPAM_MAP = new HashMap<>();
