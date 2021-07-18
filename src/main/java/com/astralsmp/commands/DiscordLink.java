@@ -25,6 +25,17 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class DiscordLink extends ListenerAdapter {
 
+    private static final String LINK_TITLE = Config.getConfig().getString("discord.command.link.title");
+    private static final String LINK_COOLDOWN = Config.getConfig().getString("discord.command.link.cooldown");
+    private static final String LINK_NO_ARGUMENTS = Config.getConfig().getString("discord.command.link.no_arguments");
+    private static final String LINK_ALREADY_LINKED = Config.getConfig().getString("discord.command.link.already_linked");
+    private static final String LINK_NOT_WHITELISTED = Config.getConfig().getString("discord.command.link.not_whitelisted");
+    private static final String LINK_PLAYER_OFFLINE = Config.getConfig().getString("discord.command.link.player_offline");
+    private static final String LINK_SPAM_REPORTED = Config.getConfig().getString("discord.command.link.spam_reported");
+    private static final String LINK_NOT_FINISHED = Config.getConfig().getString("discord.command.link.not_finished");
+    private static final String COMMAND_HELP_TITLE = Config.getConfig().getString("discord.command.help_title");
+    private static final String COMMAND_HELP_FIELD = Config.getConfig().getString("discord.command.help_field");
+
     /**
      * UNFINISHED_LINKING хранит UUID игрока, который начал привязку аккаунтов, но не закончил её.
      * ОБЯЗАТЕЛЬНО ВЫНОСИТЬ ПОЛЬЗОВАТЕЛЯ ИЗ СПИСКА ПРИ ВЫХОДЕ С СЕРВЕРА!
@@ -44,6 +55,7 @@ public class DiscordLink extends ListenerAdapter {
      * Команда привязки аккаунта дискорд к майнкрафт
      * @param event вызывает метод при любом сообщении от пользователя
      */
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         // Если сообщение равно !привязать
@@ -58,45 +70,44 @@ public class DiscordLink extends ListenerAdapter {
                 long timeLeft = System.currentTimeMillis() - COOLDOWN_MANAGER.getCooldown(sender.getId());
                 long secondsLeft = TimeUnit.MILLISECONDS.toSeconds(timeLeft);
                 if (member != null) {
-                    if (!hasRole(member, "741639199861506179")) {
+                    if (!hasRole(member, "741639199861506179")) { // РОЛЬ МОЖЕТ МЕНЯТЬСЯ В КОНФИГЕ! TODO: реализовать через конфиг
                         if (secondsLeft < DiscordCooldownManager.DEFAULT_COOLDOWN) {
                             int[] formattedLeft = DiscordCooldownManager.splitTimeArray(DiscordCooldownManager.DEFAULT_COOLDOWN - secondsLeft);
-                            channel.sendMessage(String.format(
-//                        "Подождите %02d минут(ы) %02d секунд(ы) перед использованием привязки снова", на всякий пусть будет
-                                    "Подождите %d минут(ы) %d секунд(ы) перед использованием привязки снова",
-                                    formattedLeft[1],
-                                    formattedLeft[2]
-                            )).queue();
+                            channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, String.format(LINK_COOLDOWN, formattedLeft[1], formattedLeft[2]), false, sender)).queue();
+//                                    String.format(
+////                        "Подождите %02d минут(ы) %02d секунд(ы) перед использованием привязки снова", на всякий пусть будет
+//                                    "Подождите %d минут(ы) %d секунд(ы) перед использованием привязки снова",
+//                                    formattedLeft[1],
+//                                    formattedLeft[2])).queue();
                             return;
                         }
                         // Место для добавления кд!
                         COOLDOWN_MANAGER.setCooldown(sender.getId(), System.currentTimeMillis());
                     }
                 } else {
-                    System.out.println("Member is null...");
+                    System.out.println("Не удалось установить кд для пользователя " + sender.getAsTag());
                 }
             }
 
             // Если не 2 аргумента в сообщении
             if (args.length != 2) {
-                channel.sendMessageEmbeds(errorEmbed("Неверное количество аргументов", "Для выполнения команды нужно 2 аргумента. Было обработано: " + args.length +
-                        "\nСинтаксис команды: `" + Discord.PREFIX + "привязать [ник в Майнкрафт]`", sender)).queue();
+                channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, String.format(LINK_NO_ARGUMENTS, args.length - 1, Discord.PREFIX), true, sender)).queue();
                 return;
             }
             Player target = Bukkit.getPlayer(args[1]);
             // Если игрок не присутствует на сервере
-            if (target != null) {
+            if (target != null && target.isOnline()) {
                 // Если игрока нет в вайтлисте сервера
                 // TODO: 17.07.2021 режим гостя позволит игрокам находиться на сервере не будучи в вайтлисте
                 // FIXME: 17.07.2021 проверить на работоспособность на всякий
                 if (Bukkit.getServer().hasWhitelist()) {
                     if (!target.isWhitelisted()) {
-                        channel.sendMessage("Этот игрок не в вайтлисте сервера").queue();
+                        channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, String.format(LINK_NOT_WHITELISTED, target.getDisplayName()), true, sender)).queue();
                         return;
                     }
                 }
             } else {
-                channel.sendMessage("Нет такого игрока на сервере").queue();
+                channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, String.format(LINK_PLAYER_OFFLINE, args[1]), true, sender)).queue();
                 return;
             }
             // Если у игрока нет определённых прав на привязку аккаунта
@@ -109,27 +120,24 @@ public class DiscordLink extends ListenerAdapter {
 
             // Если в бд уже есть привязанный дискорд аккаунт
             if (Database.containsValue("discord_id = " + sender.getId(), DATABASE_TABLE)) {
-                channel.sendMessageEmbeds(errorEmbed("Ошибка привязки", "Не удалось привязать аккаунт " + target.getDisplayName() +
-                        " к Вашему Дискорд аккаунту, так как к вам уже привязан аккаунт " +
-                        Database.getObject("display_name", "discord_id = " + sender.getId(), DATABASE_TABLE) +
-                        ". Вы можете отвязать его используя команду `!отвязать`", sender)).queue();
+                channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, String.format(LINK_ALREADY_LINKED, target.getDisplayName(),
+                        Database.getObject("display_name", "discord_id = " + sender.getId(), DATABASE_TABLE)), true, sender)).queue();
                 return;
             }
             // Если в бд уже есть майнкрафт аккаунт, к которому попытались привязать дискорд
             if (Database.containsValue(String.format("uuid = '%s'", target.getUniqueId()), DATABASE_TABLE)) {
-                channel.sendMessage("Невозможно привязать дискорд к аккаунту " + target.getDisplayName() + ", так как он уже имеет привязку").queue();
+                channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, String.format(LINK_ALREADY_LINKED, target.getDisplayName()), false, sender)).queue();
                 return;
             }
             // Проверка на наличие пользователя в списке спама
             if (MINECRAFT_SPAM_MAP.containsKey(sender.getId()) && MINECRAFT_SPAM_MAP.get(sender.getId()).equals(target.getUniqueId())) {
-                channel.sendMessage("Невозможно выполнить привязку к данному аккаунту," +
-                        "так как его владелец обозначил Ваши попытки привязки спамом.").queue();
+                channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, LINK_SPAM_REPORTED, true, sender)).queue();
                 return;
             }
             UUID targetUUID = target.getUniqueId();
             // Если игрок не завершил предыдущую привязку
             if (UNFINISHED_LINKING.containsKey(targetUUID)) {
-                channel.sendMessage("Владелец этого майнкрафт аккаунта не завершил предыдущую привязку").queue();
+                channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, LINK_NOT_FINISHED, false, sender)).queue();
                 return;
             }
             // Обозначение незаконченной привязки
@@ -139,6 +147,14 @@ public class DiscordLink extends ListenerAdapter {
             AtomicReference<Boolean> clicked = new AtomicReference<>(false);
 
             // Привязка аккаунта - подтверждение
+            target.sendMessage(Formatter.colorize(String.format("&%sПредложение о привязке аккаунта от " + sender.getAsTag() + "." +
+                    "\nЕсли это не Ваш Дискорд аккаунт - нажмите на &%s\"⌀ Отмена\"&%s." +
+                    "\nПри повторных попытках привязки нажмите &%s\"✎ Спам\"&%s.",
+                    AstralThread.GRAY_COLOR,
+                    AstralThread.RED_COLOR,
+                    AstralThread.GRAY_COLOR,
+                    AstralThread.YELLOW_COLOR,
+                    AstralThread.GRAY_COLOR)));
             TextComponent link = new TextComponent("✔ Привязать");
             link.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(Formatter.colorize("&7Привязать аккаунт к Дискорду"))));
             link.setColor(ChatColor.of(AstralThread.GREEN_COLOR));
@@ -148,7 +164,7 @@ public class DiscordLink extends ListenerAdapter {
                 if (clicked.get()) return;
 
                 // Ответ пользователю в случае отсутствия ошибок
-                p.sendMessage("Ваш аккаунт был успешно привязан к " + sender.getAsTag());
+                p.sendMessage(Formatter.colorize(String.format("&%sВаш аккаунт был успешно привязан к %s", AstralThread.GREEN_COLOR, sender.getAsTag())));
                 channel.sendMessage(sender.getAsTag() + " привязан к аккаунту " + target.getDisplayName()).queue();
                 // Данные для вноса в бд
                 Object[] userInfo = {target.getUniqueId(), target.getDisplayName(), sender.getId()};
@@ -169,7 +185,7 @@ public class DiscordLink extends ListenerAdapter {
                 if (clicked.get()) return;
 
                 // Ответ пользователю в случае отсутствия ошибок
-                p.sendMessage("Привязка к аккаунту " + sender.getAsTag() + " была отменена.");
+                p.sendMessage(Formatter.colorize(String.format("&%sПривязка к аккаунту %s была отменена.", AstralThread.RED_COLOR, sender.getAsTag())));
                 channel.sendMessage(sender.getName() + ", привязка аккаунтов была отменена.").queue();
 
                 // Обозначение завершения привязки
@@ -188,7 +204,7 @@ public class DiscordLink extends ListenerAdapter {
                 if (clicked.get()) return;
 
                 // Ответ пользователю в случае отсутствия ошибок
-                p.sendMessage("Попытки привязки от данного игрока более Вас не потревожат, модераторы получат уведомление о спаме.");
+                p.sendMessage(Formatter.colorize(String.format("&%sПопытки привязки от данного игрока более Вас не потревожат, модераторы получат уведомление о спаме.", AstralThread.YELLOW_COLOR)));
                 MINECRAFT_SPAM_MAP.put(sender.getId(), target.getUniqueId());
 
                 // Обозначение завершения привязки
@@ -203,13 +219,13 @@ public class DiscordLink extends ListenerAdapter {
         }
     }
 
-    public MessageEmbed errorEmbed(String title, String description, User sender) {
+    public MessageEmbed errorEmbed(String title, String description, boolean helpField, User sender) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(title);
         embedBuilder.setDescription(description);
         embedBuilder.setColor(Formatter.hexColorToRGB(AstralThread.RED_COLOR));
-        embedBuilder.setFooter(sender.getAsTag(), sender.getAvatarUrl());
-        embedBuilder.addField(Discord.PREFIX + "помощь","Просмотреть список всех доступных команд", true);
+        if (sender != null) embedBuilder.setFooter(sender.getAsTag(), sender.getAvatarUrl());
+        if (helpField) embedBuilder.addField(COMMAND_HELP_TITLE, COMMAND_HELP_FIELD, true);
         embedBuilder.setTimestamp(Instant.now());
         return embedBuilder.build();
     }

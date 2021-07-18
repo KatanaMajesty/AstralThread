@@ -139,12 +139,21 @@ public class DiscordUnlink extends ListenerAdapter {
 
     }
 
+    /**
+     * Метод для создания шаблонных эмбедов при отвязке
+     * @param title Заголовок эмбеда
+     * @param description Описания эмбеда
+     * @param sender Отправитель, спровоцировавший отправку эмбеда (может быть null)
+     * @return возвращает объект типа MessageEmbed
+     */
     public MessageEmbed createEmbed(String title, String description, User sender) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(title);
         embedBuilder.setDescription(description);
         embedBuilder.setColor(new Color(67, 191, 90));
-        embedBuilder.setFooter(sender.getAsTag(), sender.getAvatarUrl());
+        if (sender != null) {
+            embedBuilder.setFooter(sender.getAsTag(), sender.getAvatarUrl());
+        }
         embedBuilder.setTimestamp(Instant.now());
         return embedBuilder.build();
     }

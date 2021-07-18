@@ -86,16 +86,20 @@ public class Config {
 
         // Привязка аккаунтов
         defaultValues.put("discord.command.link.title", "Привязка аккаунтов");
-        defaultValues.put("discord.command.link.desc", "%sender%, мне не удалось найти привязанный к Вашему дискорду аккаунт.");
-        defaultValues.put("discord.command.link.not_linked", "Данный игрок не привязан к вашему дискорд аккаунту.");
-        defaultValues.put("discord.command.link.previous", "Вы не завершили предыдущую отвязку аккаунта");
-        defaultValues.put("discord.command.link.success", "Успешно отвязано!");
-        defaultValues.put("discord.command.link.canceled", "%sender%, отвязка аккаунтов была отменена.");
-        defaultValues.put("discord.command.link.minecraft.success", "Ваш аккаунт более не привязан к %sender%");
-        defaultValues.put("discord.command.link.minecraft.canceled", "Отвязка от аккаунта %sender% была отменена.");
+        defaultValues.put("discord.command.link.cooldown", "Подождите %d минут(ы) %d секунд(ы) перед использованием привязки снова");
+        defaultValues.put("discord.command.link.no_arguments", "Для выполнения команды нужен 1 аргумент. Было обработано: %d\nСинтаксис команды: `%sпривязать [ник в Майнкрафт]`");
+        defaultValues.put("discord.command.link.already_linked", "Не удалось привязать аккаунт %s к вашему Дискорд аккаунту, так как последний уже привязан к %s. " +
+                "\nВы можете отвязать его используя команду `!отвязать`");
+        defaultValues.put("discord.command.link.not_whitelisted", "Игрок %s не в вайтлисте сервера. Доступ к привязке аккаунтов имеют только игроки проекта");
+        defaultValues.put("discord.command.link.player_offline", "Игрок %s не был найден на сервере. Для привязки аккаунта Вы должны находиться на нашем Майнкрафт сервере");
+        defaultValues.put("discord.command.link.spam_reported", "Невозможно выполнить привязку к данному аккаунту, так как его владелец обозначил Ваши попытки привязки спамом");
+        defaultValues.put("discord.command.link.not_finished", "Владелец этого майнкрафт аккаунта не завершил предыдущую привязку");
+        defaultValues.put("discord.command.link.minecraft.already_linked", "Невозможно привязать дискорд к аккаунту %s, так как он уже имеет привязку");
 
         // Общие для привязки/отвязки
         defaultValues.put("discord.command.not_found", "Вы должны быть на сервере в момент отвязки аккаунтов");
+        defaultValues.put("discord.command.help_title", "!помощь");
+        defaultValues.put("discord.command.help_field", "для просмотра списка всех доступных команд");
 
         // Цветовая палитра
         defaultValues.put("color_palette.green", "#21db37");
