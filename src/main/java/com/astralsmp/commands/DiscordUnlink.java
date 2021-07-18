@@ -32,13 +32,6 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class DiscordUnlink extends ListenerAdapter {
 
-    /**
-     * UNFINISHED_UNLINKING хранит UUID игрока, который начал привязку аккаунтов, но не закончил её.
-     * ОБЯЗАТЕЛЬНО ВЫНОСИТЬ ПОЛЬЗОВАТЕЛЯ ИЗ СПИСКА ПРИ ВЫХОДЕ С СЕРВЕРА!
-     */
-    public static final Map<UUID, String> UNFINISHED_UNLINKING = new HashMap<>();
-    public static final String TABLE_NAME = "astral_linked_players";
-
     private static final String UNLINK_TITLE = Config.getConfig().getString("discord.command.unlink.title");
     private static final String UNLINK_NO_ACCOUNT = Config.getConfig().getString("discord.command.unlink.no_account");
     private static final String UNLINK_NOT_LINKED = Config.getConfig().getString("discord.command.unlink.not_linked");
@@ -47,6 +40,13 @@ public class DiscordUnlink extends ListenerAdapter {
     private static final String UNLINK_CANCELED = Config.getConfig().getString("discord.command.unlink.canceled");
     private static final String UNLINK_MINECRAFT_SUCCESS = Config.getConfig().getString("discord.command.unlink.minecraft.success");
     private static final String UNLINK_MINECRAFT_CANCELED = Config.getConfig().getString("discord.command.unlink.minecraft.canceled");
+
+    /**
+     * UNFINISHED_UNLINKING хранит UUID игрока, который начал привязку аккаунтов, но не закончил её.
+     * ОБЯЗАТЕЛЬНО ВЫНОСИТЬ ПОЛЬЗОВАТЕЛЯ ИЗ СПИСКА ПРИ ВЫХОДЕ С СЕРВЕРА!
+     */
+    public static final Map<UUID, String> UNFINISHED_UNLINKING = new HashMap<>();
+    public static final String TABLE_NAME = "astral_linked_players";
 
     /**
      * Метод - команда отвязки Майнкрафта от Дискорда через последний
@@ -62,8 +62,8 @@ public class DiscordUnlink extends ListenerAdapter {
             MessageChannel channel = event.getChannel();
             // Проверка на наличие discord id в базе данных
             if (!Database.containsValue("discord_id = " + sender.getId(), TABLE_NAME)) {
-                 channel.sendMessageEmbeds(createEmbed(
-                         UNLINK_TITLE, UNLINK_NO_ACCOUNT.replace("%sender", sender.getName()), sender)
+                 channel.sendMessageEmbeds(errorEmbed(
+                         UNLINK_TITLE, UNLINK_NO_ACCOUNT.replace("%sender%", sender.getName()), sender)
                  ).queue();
                 return;
             }
@@ -71,7 +71,7 @@ public class DiscordUnlink extends ListenerAdapter {
             Player target = Bukkit.getPlayer((String) Database.getObject("display_name", "discord_id = " + sender.getId(), TABLE_NAME));
             // Попытка найти игрока на сервере
             if (target == null) {
-                channel.sendMessageEmbeds(createEmbed(Config.getConfig().getString("discord.command.unlink.title"),
+                channel.sendMessageEmbeds(errorEmbed(UNLINK_TITLE,
                         Config.getConfig().getString("discord.command.not_found"), sender)).queue();
                 return;
             }
@@ -82,14 +82,14 @@ public class DiscordUnlink extends ListenerAdapter {
             UUID targetUUID = target.getUniqueId();
             if (!Objects.equals(databaseUUID, targetUUID.toString())) {
                 System.out.println(Database.getObject("uuid", "discord_id = " + sender.getId(), TABLE_NAME));
-                channel.sendMessageEmbeds(createEmbed(
+                channel.sendMessageEmbeds(errorEmbed(
                         UNLINK_TITLE,
                         UNLINK_NOT_LINKED, sender)
                 ).queue();
                 return;
             }
             if (UNFINISHED_UNLINKING.containsKey(targetUUID)) {
-                channel.sendMessageEmbeds(createEmbed(
+                channel.sendMessageEmbeds(errorEmbed(
                         UNLINK_TITLE,
                         UNLINK_PREVIOUS, sender)
                 ).queue();
@@ -104,14 +104,16 @@ public class DiscordUnlink extends ListenerAdapter {
             unlink.setColor(ChatColor.of(AstralThread.RED_COLOR));
             TextComponentCallback.execute(unlink, p -> {
                 if (finished.get()) return;
-                p.sendMessage(Formatter.colorize(UNLINK_MINECRAFT_SUCCESS.replace("%sender", sender.getAsTag())));
+                p.sendMessage(Formatter.colorize(UNLINK_MINECRAFT_SUCCESS.replace("%sender%", sender.getAsTag())));
                 // Данные для удаления из бд
                 Database.execute("DELETE FROM astral_linked_players WHERE discord_id = " + sender.getId());
-                channel.sendMessageEmbeds(createEmbed(
-                        UNLINK_TITLE,
-                        UNLINK_SUCCESS,
-                        sender)
-                ).queue();
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setTitle(UNLINK_TITLE);
+                embedBuilder.setDescription(UNLINK_SUCCESS);
+                embedBuilder.setColor(Formatter.hexColorToRGB(AstralThread.GREEN_COLOR));
+                embedBuilder.setFooter(sender.getAsTag(), sender.getAvatarUrl());
+                embedBuilder.setTimestamp(Instant.now());
+                channel.sendMessageEmbeds(embedBuilder.build()).queue();
                 // чистка
                 UNFINISHED_UNLINKING.remove(targetUUID);
                 finished.set(true);
@@ -123,10 +125,10 @@ public class DiscordUnlink extends ListenerAdapter {
             cancel.setColor(ChatColor.of(AstralThread.YELLOW_COLOR));
             TextComponentCallback.execute(cancel, p -> {
                 if (finished.get()) return;
-                p.sendMessage(Formatter.colorize(UNLINK_MINECRAFT_CANCELED.replace("%sender", sender.getAsTag())));
-                channel.sendMessageEmbeds(createEmbed(
+                p.sendMessage(Formatter.colorize(UNLINK_MINECRAFT_CANCELED.replace("%sender%", sender.getAsTag())));
+                channel.sendMessageEmbeds(errorEmbed(
                         UNLINK_TITLE,
-                        UNLINK_CANCELED.replace("%sender", sender.getName()), sender)
+                        UNLINK_CANCELED.replace("%sender%", sender.getName()), sender)
                 ).queue();
                 // чистка
                 UNFINISHED_UNLINKING.remove(targetUUID);
@@ -146,11 +148,11 @@ public class DiscordUnlink extends ListenerAdapter {
      * @param sender Отправитель, спровоцировавший отправку эмбеда (может быть null)
      * @return возвращает объект типа MessageEmbed
      */
-    public MessageEmbed createEmbed(String title, String description, User sender) {
+    public MessageEmbed errorEmbed(String title, String description, User sender) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(title);
         embedBuilder.setDescription(description);
-        embedBuilder.setColor(new Color(67, 191, 90));
+        embedBuilder.setColor(Formatter.hexColorToRGB(AstralThread.RED_COLOR));
         if (sender != null) {
             embedBuilder.setFooter(sender.getAsTag(), sender.getAvatarUrl());
         }

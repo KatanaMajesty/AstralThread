@@ -22,9 +22,6 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class DiscordLink extends ListenerAdapter {
 
@@ -37,10 +34,14 @@ public class DiscordLink extends ListenerAdapter {
     private static final String LINK_PLAYER_OFFLINE = Config.getConfig().getString("discord.command.link.player_offline");
     private static final String LINK_SPAM_REPORTED = Config.getConfig().getString("discord.command.link.spam_reported");
     private static final String LINK_NOT_FINISHED = Config.getConfig().getString("discord.command.link.not_finished");
+    private static final String LINK_CANT_DM = Config.getConfig().getString("discord.command.link.cant_dm");
     private static final String LINK_SENT = Config.getConfig().getString("discord.command.link.sent");
     private static final String LINK_SUCCESS = Config.getConfig().getString("discord.command.link.success");
     private static final String LINK_CANCELED = Config.getConfig().getString("discord.command.link.canceled");
     private static final String LINK_SPAMMED = Config.getConfig().getString("discord.command.link.spammed");
+    private static final String LINK_MINECRAFT_SUCCESS = Config.getConfig().getString("discord.command.link.success");
+    private static final String LINK_MINECRAFT_CANCELED = Config.getConfig().getString("discord.command.link.canceled");
+    private static final String LINK_MINECRAFT_SPAMMED = Config.getConfig().getString("discord.command.link.spammed");
     private static final String COMMAND_HELP_TITLE = Config.getConfig().getString("discord.command.help_title");
     private static final String COMMAND_HELP_FIELD = Config.getConfig().getString("discord.command.help_field");
 
@@ -163,13 +164,13 @@ public class DiscordLink extends ListenerAdapter {
                 return;
             }
             if (DM_DISABLED.contains(sender.getId())) {
-                channel.sendMessage("Бот не смог отправить вам сообщение в ЛС. Для взаимодействия бота откройте ЛС от участников сервера").queue();
+                channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, LINK_CANT_DM, true, sender)).queue();
                 return;
             }
 
             // Обозначение незаконченной привязки
             UNFINISHED_LINKING.put(targetUUID, sender.getId());
-            // Атомное значение типа логический для проверки на нажатые кнопки
+            // Атомное значение типа bool для проверки на нажатые кнопки
             // Если кнопка была нажата - другие не будут выполнять свой функционал
             AtomicReference<Boolean> clicked = new AtomicReference<>(false);
 
@@ -191,7 +192,7 @@ public class DiscordLink extends ListenerAdapter {
                 if (clicked.get()) return;
 
                 // Ответ пользователю в случае отсутствия ошибок
-                p.sendMessage(Formatter.colorize(String.format("&%sВаш аккаунт был успешно привязан к %s", AstralThread.GREEN_COLOR, sender.getAsTag())));
+                p.sendMessage(Formatter.colorize(String.format(LINK_MINECRAFT_SUCCESS, AstralThread.GREEN_COLOR, sender.getAsTag())));
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle(LINK_TITLE);
                 builder.setDescription(String.format(LINK_SUCCESS, sender.getName(), target.getDisplayName()));
@@ -219,7 +220,7 @@ public class DiscordLink extends ListenerAdapter {
                 if (clicked.get()) return;
 
                 // Ответ пользователю в случае отсутствия ошибок
-                p.sendMessage(Formatter.colorize(String.format("&%sПривязка к аккаунту %s была отменена.", AstralThread.RED_COLOR, sender.getAsTag())));
+                p.sendMessage(Formatter.colorize(String.format(LINK_MINECRAFT_CANCELED, AstralThread.RED_COLOR, sender.getAsTag())));
                 sender.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessageEmbeds(errorEmbed(LINK_TITLE,
                         String.format(LINK_CANCELED, sender.getName(), target.getDisplayName()), true, sender))).
                         queue();
@@ -239,8 +240,7 @@ public class DiscordLink extends ListenerAdapter {
                 if (clicked.get()) return;
 
                 // Ответ пользователю в случае отсутствия ошибок
-                p.sendMessage(Formatter.colorize(String.format("&%sПопытки привязки от данного игрока более Вас не потревожат, модераторы получат уведомление о спаме.",
-                        AstralThread.YELLOW_COLOR)));
+                p.sendMessage(Formatter.colorize(String.format(LINK_MINECRAFT_SPAMMED, AstralThread.YELLOW_COLOR)));
                 sender.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessageEmbeds(
                         errorEmbed(LINK_TITLE, String.format(LINK_SPAMMED, target.getDisplayName()), true, sender))).queue();
                 MINECRAFT_SPAM_MAP.put(sender.getId(), target.getUniqueId());

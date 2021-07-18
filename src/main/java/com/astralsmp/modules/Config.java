@@ -67,6 +67,7 @@ public class Config {
 
     /**
      * Добавляет дефолтные значения для конфига через карту
+     * НАСТОЯТЕЛЬНО НЕ РЕКОМЕНДУЮ трогать плейсхолдеры их String.format
      * @param defaultValues карта K,V со всеми значениями для конфига
       */
     public void addDefaults(Map<String, Object> defaultValues) {
@@ -81,8 +82,8 @@ public class Config {
         defaultValues.put("discord.command.unlink.previous", "Вы не завершили предыдущую отвязку аккаунта");
         defaultValues.put("discord.command.unlink.success", "Успешно отвязано!");
         defaultValues.put("discord.command.unlink.canceled", "%sender%, отвязка аккаунтов была отменена.");
-        defaultValues.put("discord.command.unlink.minecraft.success", "Ваш аккаунт более не привязан к %sender%");
-        defaultValues.put("discord.command.unlink.minecraft.canceled", "Отвязка от аккаунта %sender% была отменена.");
+        defaultValues.put("discord.command.unlink.minecraft.success", "&#21db37Ваш аккаунт более не привязан к %sender%");
+        defaultValues.put("discord.command.unlink.minecraft.canceled", "&#fc3535Отвязка от аккаунта %sender% была отменена.");
 
         // Привязка аккаунтов
         defaultValues.put("discord.command.link.title", "Привязка аккаунтов");
@@ -95,11 +96,15 @@ public class Config {
         defaultValues.put("discord.command.link.player_offline", "Игрок %s не был найден на сервере. Для привязки аккаунта Вы должны находиться на нашем Майнкрафт сервере");
         defaultValues.put("discord.command.link.spam_reported", "Невозможно выполнить привязку к данному аккаунту, так как его владелец обозначил Ваши попытки привязки спамом");
         defaultValues.put("discord.command.link.not_finished", "Владелец этого майнкрафт аккаунта не завершил предыдущую привязку");
-        defaultValues.put("discord.command.link.minecraft.already_linked", "Невозможно привязать дискорд к аккаунту %s, так как он уже имеет привязку");
+        defaultValues.put("discord.command.link.cant_dm", "Боту не удалось отправить сообщение Вам в ЛС.\nДля привязки аккаунтов разрешите личные сообщения от участников сервера");
         defaultValues.put("discord.command.link.sent", "%s, запрос на привязку Вашего Дискорд аккаунта был отправлен %s. Подтвердите привязку на сервере, нажав на соответствующую кнопку");
         defaultValues.put("discord.command.link.success", "%s, Ваш Дискорд аккаунт успешно привязан к %s.\nВы можете отвязать его используя команду `!отвязать`");
         defaultValues.put("discord.command.link.canceled", "%s, привязка Вашего Дискорд аккаунта к %s была отменена.");
         defaultValues.put("discord.command.link.spammed", "%s обозначил Ваши попытки привязки - спамом.\nБолее Вы не сможете привязать свой Дискорд к данному Майнкрафт аккаунту");
+        defaultValues.put("discord.command.link.minecraft.already_linked", "Невозможно привязать дискорд к аккаунту %s, так как он уже имеет привязку");
+        defaultValues.put("discord.command.link.minecraft.success", "&%sВаш аккаунт был успешно привязан к %s.");
+        defaultValues.put("discord.command.link.minecraft.canceled", "&%sПривязка к аккаунту %s была отклонена.");
+        defaultValues.put("discord.command.link.minecraft.spammed", "&%sПопытки привязки от данного игрока более Вас не потревожат, модераторы получат уведомление о спаме.");
 
         // Общие для привязки/отвязки
         defaultValues.put("discord.command.not_found", "Вы должны быть на сервере в момент отвязки аккаунтов");

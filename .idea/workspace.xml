@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd045536-74c7-4207-b1c7-e673e37933df" name="Default Changelist" comment="Дописал эмбеды в DiscordLink.java, перенёс половину в личные сообщения">
+    <list default="true" id="fd045536-74c7-4207-b1c7-e673e37933df" name="Default Changelist" comment="Добавил проверку на возможность боту написать в лс пользователю. Доработал эмбеды, убрал дебаг лишний">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordLink.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordLink.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordUnlink.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordUnlink.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/Config.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -226,7 +227,14 @@
       <option name="project" value="LOCAL" />
       <updated>1626604906543</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Добавил проверку на возможность боту написать в лс пользователю. Доработал эмбеды, убрал дебаг лишний">
+      <created>1626609736485</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1626609736485</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -256,6 +264,53 @@
     <MESSAGE value="Проверка на наличие игрока в вайтлисте и наличие у него прав.&#10;Осталось перенести весь функционал в команду /unlink (проверка вебхука)" />
     <MESSAGE value="Немного эмбедов и связь с конфигом в DiscordLink" />
     <MESSAGE value="Дописал эмбеды в DiscordLink.java, перенёс половину в личные сообщения" />
-    <option name="LAST_COMMIT_MESSAGE" value="Дописал эмбеды в DiscordLink.java, перенёс половину в личные сообщения" />
+    <MESSAGE value="Добавил проверку на возможность боту написать в лс пользователю. Доработал эмбеды, убрал дебаг лишний" />
+    <option name="LAST_COMMIT_MESSAGE" value="Добавил проверку на возможность боту написать в лс пользователю. Доработал эмбеды, убрал дебаг лишний" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordLink.java</url>
+          <line>194</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordLink.java</url>
+          <line>222</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordLink.java</url>
+          <line>242</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordUnlink.java</url>
+          <line>73</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordUnlink.java</url>
+          <line>84</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordUnlink.java</url>
+          <line>90</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordUnlink.java</url>
+          <line>128</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordUnlink.java</url>
+          <line>111</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
