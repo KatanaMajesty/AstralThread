@@ -86,6 +86,7 @@ public class Config {
 
         // Привязка аккаунтов
         defaultValues.put("discord.command.link.title", "Привязка аккаунтов");
+        defaultValues.put("discord.command.link.no_perm", "У вас нет прав для привязки своего аккаунта. Обратитесь к модерации за помощью.\n*Отсутствуют права:* `%s`");
         defaultValues.put("discord.command.link.cooldown", "Подождите %d минут(ы) %d секунд(ы) перед использованием привязки снова");
         defaultValues.put("discord.command.link.no_arguments", "Для выполнения команды нужен 1 аргумент. Было обработано: %d\nСинтаксис команды: `%sпривязать [ник в Майнкрафт]`");
         defaultValues.put("discord.command.link.already_linked", "Не удалось привязать аккаунт %s к вашему Дискорд аккаунту, так как последний уже привязан к %s. " +
@@ -95,6 +96,10 @@ public class Config {
         defaultValues.put("discord.command.link.spam_reported", "Невозможно выполнить привязку к данному аккаунту, так как его владелец обозначил Ваши попытки привязки спамом");
         defaultValues.put("discord.command.link.not_finished", "Владелец этого майнкрафт аккаунта не завершил предыдущую привязку");
         defaultValues.put("discord.command.link.minecraft.already_linked", "Невозможно привязать дискорд к аккаунту %s, так как он уже имеет привязку");
+        defaultValues.put("discord.command.link.sent", "%s, запрос на привязку Вашего Дискорд аккаунта был отправлен %s. Подтвердите привязку, нажав на соответствующую кнопку");
+        defaultValues.put("discord.command.link.success", "%s, Ваш Дискорд аккаунт успешно привязан к %s.\nВы можете отвязать его используя команду `!отвязать`");
+        defaultValues.put("discord.command.link.canceled", "%s, привязка Вашего Дискорд аккаунта к %s была отменена.");
+        defaultValues.put("discord.command.link.spammed", "%s обозначил Ваши попытки привязки - спамом.\nБолее Вы не сможете привязать свой Дискорд к данному Майнкрафт аккаунту");
 
         // Общие для привязки/отвязки
         defaultValues.put("discord.command.not_found", "Вы должны быть на сервере в момент отвязки аккаунтов");

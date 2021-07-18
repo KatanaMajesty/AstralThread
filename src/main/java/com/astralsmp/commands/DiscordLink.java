@@ -22,10 +22,12 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public class DiscordLink extends ListenerAdapter {
 
     private static final String LINK_TITLE = Config.getConfig().getString("discord.command.link.title");
+    private static final String LINK_NO_PERM = Config.getConfig().getString("discord.command.link.no_perm");
     private static final String LINK_COOLDOWN = Config.getConfig().getString("discord.command.link.cooldown");
     private static final String LINK_NO_ARGUMENTS = Config.getConfig().getString("discord.command.link.no_arguments");
     private static final String LINK_ALREADY_LINKED = Config.getConfig().getString("discord.command.link.already_linked");
@@ -33,6 +35,10 @@ public class DiscordLink extends ListenerAdapter {
     private static final String LINK_PLAYER_OFFLINE = Config.getConfig().getString("discord.command.link.player_offline");
     private static final String LINK_SPAM_REPORTED = Config.getConfig().getString("discord.command.link.spam_reported");
     private static final String LINK_NOT_FINISHED = Config.getConfig().getString("discord.command.link.not_finished");
+    private static final String LINK_SENT = Config.getConfig().getString("discord.command.link.sent");
+    private static final String LINK_SUCCESS = Config.getConfig().getString("discord.command.link.success");
+    private static final String LINK_CANCELED = Config.getConfig().getString("discord.command.link.canceled");
+    private static final String LINK_SPAMMED = Config.getConfig().getString("discord.command.link.spammed");
     private static final String COMMAND_HELP_TITLE = Config.getConfig().getString("discord.command.help_title");
     private static final String COMMAND_HELP_FIELD = Config.getConfig().getString("discord.command.help_field");
 
@@ -55,6 +61,7 @@ public class DiscordLink extends ListenerAdapter {
      * Команда привязки аккаунта дискорд к майнкрафт
      * @param event вызывает метод при любом сообщении от пользователя
      */
+    // Чтобы видеть разницу между lamda и callback
     @SuppressWarnings("ConstantConditions")
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
@@ -113,8 +120,7 @@ public class DiscordLink extends ListenerAdapter {
             // Если у игрока нет определённых прав на привязку аккаунта
             String permission = "astralsmp.link";
             if (!target.hasPermission(permission)) {
-                channel.sendMessage(String.format("У вас нет прав для привязки своего аккаунта." +
-                        " Обратитесь к модерации за помощью. *Отсутствуют права:* `%s`", permission)).queue();
+                channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, String.format(LINK_NO_PERM, permission), true, sender)).queue();
                 return;
             }
 
@@ -165,7 +171,20 @@ public class DiscordLink extends ListenerAdapter {
 
                 // Ответ пользователю в случае отсутствия ошибок
                 p.sendMessage(Formatter.colorize(String.format("&%sВаш аккаунт был успешно привязан к %s", AstralThread.GREEN_COLOR, sender.getAsTag())));
-                channel.sendMessage(sender.getAsTag() + " привязан к аккаунту " + target.getDisplayName()).queue();
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle(LINK_TITLE);
+                builder.setDescription(String.format(LINK_SUCCESS, sender.getName(), target.getDisplayName()));
+                builder.setColor(Formatter.hexColorToRGB(AstralThread.GREEN_COLOR));
+                builder.setFooter(sender.getAsTag(), sender.getAvatarUrl());
+                builder.setTimestamp(Instant.now());
+                // присылает эмбед в лс участнику
+                sender.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessageEmbeds(builder.build())).queue(null, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) {
+                        // Присылает эмбед в канал, если лс участника закрыта
+                        channel.sendMessageEmbeds(builder.build()).queue();
+                    }
+                });
                 // Данные для вноса в бд
                 Object[] userInfo = {target.getUniqueId(), target.getDisplayName(), sender.getId()};
                 Database.insertValues(userInfo, DATABASE_TABLE);
@@ -186,8 +205,14 @@ public class DiscordLink extends ListenerAdapter {
 
                 // Ответ пользователю в случае отсутствия ошибок
                 p.sendMessage(Formatter.colorize(String.format("&%sПривязка к аккаунту %s была отменена.", AstralThread.RED_COLOR, sender.getAsTag())));
-                channel.sendMessage(sender.getName() + ", привязка аккаунтов была отменена.").queue();
-
+                sender.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessageEmbeds(errorEmbed(LINK_TITLE,
+                        String.format(LINK_CANCELED, sender.getName(), target.getDisplayName()), true, sender))).
+                        queue(null, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) {
+                        channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, String.format(LINK_CANCELED, sender.getName(), target.getDisplayName()), true, sender)).queue();
+                    }
+                });
                 // Обозначение завершения привязки
                 UNFINISHED_LINKING.remove(targetUUID);
                 clicked.set(true);
@@ -204,7 +229,15 @@ public class DiscordLink extends ListenerAdapter {
                 if (clicked.get()) return;
 
                 // Ответ пользователю в случае отсутствия ошибок
-                p.sendMessage(Formatter.colorize(String.format("&%sПопытки привязки от данного игрока более Вас не потревожат, модераторы получат уведомление о спаме.", AstralThread.YELLOW_COLOR)));
+                p.sendMessage(Formatter.colorize(String.format("&%sПопытки привязки от данного игрока более Вас не потревожат, модераторы получат уведомление о спаме.",
+                        AstralThread.YELLOW_COLOR)));
+                sender.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessageEmbeds(
+                        errorEmbed(LINK_TITLE, String.format(LINK_CANCELED, target.getDisplayName()), true, sender))).queue(null, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) {
+                        channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, String.format(LINK_CANCELED, target.getDisplayName()), true, sender)).queue();
+                    }
+                });
                 MINECRAFT_SPAM_MAP.put(sender.getId(), target.getUniqueId());
 
                 // Обозначение завершения привязки
@@ -212,9 +245,16 @@ public class DiscordLink extends ListenerAdapter {
                 clicked.set(true);
             });
 
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle(LINK_TITLE);
+            builder.setDescription(String.format(LINK_SENT, sender.getName(), target.getDisplayName()));
+            builder.setColor(Formatter.hexColorToRGB(AstralThread.GREEN_COLOR));
+            builder.setFooter(sender.getAsTag(), sender.getAvatarUrl());
+            builder.setTimestamp(Instant.now());
+            channel.sendMessageEmbeds(builder.build()).queue();
+
             TextComponent slash = new TextComponent(" / ");
             slash.setColor(ChatColor.of(AstralThread.GRAY_COLOR));
-
             target.spigot().sendMessage(link, slash, cancel, slash, spam);
         }
     }

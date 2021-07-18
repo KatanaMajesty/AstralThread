@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd045536-74c7-4207-b1c7-e673e37933df" name="Default Changelist" comment="Проверка на наличие игрока в вайтлисте и наличие у него прав.&#10;Осталось перенести весь функционал в команду /unlink (проверка вебхука)">
+    <list default="true" id="fd045536-74c7-4207-b1c7-e673e37933df" name="Default Changelist" comment="Немного эмбедов и связь с конфигом в DiscordLink">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/astralsmp/modules/Config.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/astralsmp/modules/Config.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordLink.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordLink.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordUnlink.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordUnlink.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/Config.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/tasks/discord_bridge.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/tasks/discord_bridge.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -214,7 +213,14 @@
       <option name="project" value="LOCAL" />
       <updated>1626541803402</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Немного эмбедов и связь с конфигом в DiscordLink">
+      <created>1626601412386</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1626601412386</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -242,6 +248,7 @@
     <MESSAGE value="КД доделал" />
     <MESSAGE value="Проверка на наличие игрока в вайтлисте и наличие у него прав.&#10;Осталось перенести весь функционал в команду /unlink" />
     <MESSAGE value="Проверка на наличие игрока в вайтлисте и наличие у него прав.&#10;Осталось перенести весь функционал в команду /unlink (проверка вебхука)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Проверка на наличие игрока в вайтлисте и наличие у него прав.&#10;Осталось перенести весь функционал в команду /unlink (проверка вебхука)" />
+    <MESSAGE value="Немного эмбедов и связь с конфигом в DiscordLink" />
+    <option name="LAST_COMMIT_MESSAGE" value="Немного эмбедов и связь с конфигом в DiscordLink" />
   </component>
 </project>
