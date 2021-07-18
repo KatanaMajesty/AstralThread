@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd045536-74c7-4207-b1c7-e673e37933df" name="Default Changelist" comment="Немного эмбедов и связь с конфигом в DiscordLink">
+    <list default="true" id="fd045536-74c7-4207-b1c7-e673e37933df" name="Default Changelist" comment="Дописал эмбеды в DiscordLink.java, перенёс половину в личные сообщения">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/astralsmp/modules/Config.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/astralsmp/modules/Config.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordLink.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/commands/DiscordLink.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/astralsmp/modules/Config.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -220,7 +219,14 @@
       <option name="project" value="LOCAL" />
       <updated>1626601412386</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Дописал эмбеды в DiscordLink.java, перенёс половину в личные сообщения">
+      <created>1626604906543</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1626604906543</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -249,6 +255,7 @@
     <MESSAGE value="Проверка на наличие игрока в вайтлисте и наличие у него прав.&#10;Осталось перенести весь функционал в команду /unlink" />
     <MESSAGE value="Проверка на наличие игрока в вайтлисте и наличие у него прав.&#10;Осталось перенести весь функционал в команду /unlink (проверка вебхука)" />
     <MESSAGE value="Немного эмбедов и связь с конфигом в DiscordLink" />
-    <option name="LAST_COMMIT_MESSAGE" value="Немного эмбедов и связь с конфигом в DiscordLink" />
+    <MESSAGE value="Дописал эмбеды в DiscordLink.java, перенёс половину в личные сообщения" />
+    <option name="LAST_COMMIT_MESSAGE" value="Дописал эмбеды в DiscordLink.java, перенёс половину в личные сообщения" />
   </component>
 </project>

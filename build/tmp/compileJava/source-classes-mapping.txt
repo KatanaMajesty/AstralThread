@@ -22,3 +22,6 @@ com/astralsmp/events/LinkingPlayerEvents.java
  com.astralsmp.events.LinkingPlayerEvents$3
 com/astralsmp/commands/DiscordLink.java
  com.astralsmp.commands.DiscordLink
+ com.astralsmp.commands.DiscordLink$1
+ com.astralsmp.commands.DiscordLink$2
+ com.astralsmp.commands.DiscordLink$3

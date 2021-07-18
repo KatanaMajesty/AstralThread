@@ -93,8 +93,7 @@ public class Database {
         if (dataSource.getUrl().isEmpty()) throw new NullPointerException();
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
-            System.out.println(statement.executeUpdate());
-            System.out.println("Очищено!");
+            statement.executeUpdate();
             statement.close();
         } catch (SQLException exception) {
             exception.printStackTrace();

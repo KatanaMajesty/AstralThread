@@ -22,7 +22,9 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class DiscordLink extends ListenerAdapter {
 
@@ -49,6 +51,7 @@ public class DiscordLink extends ListenerAdapter {
      */
     public static final Map<UUID, String> UNFINISHED_LINKING = new HashMap<>();
     private static final Map<String, UUID> MINECRAFT_SPAM_MAP = new HashMap<>();
+    private static final Set<String> DM_DISABLED = new HashSet<>();
     private final DiscordCooldownManager COOLDOWN_MANAGER = new DiscordCooldownManager();
     private final String DATABASE_TABLE = "astral_linked_players";
 
@@ -61,7 +64,7 @@ public class DiscordLink extends ListenerAdapter {
      * Команда привязки аккаунта дискорд к майнкрафт
      * @param event вызывает метод при любом сообщении от пользователя
      */
-    // Чтобы видеть разницу между lamda и callback
+    // Чтобы видеть разницу между lambda и callback
     @SuppressWarnings("ConstantConditions")
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
@@ -81,11 +84,6 @@ public class DiscordLink extends ListenerAdapter {
                         if (secondsLeft < DiscordCooldownManager.DEFAULT_COOLDOWN) {
                             int[] formattedLeft = DiscordCooldownManager.splitTimeArray(DiscordCooldownManager.DEFAULT_COOLDOWN - secondsLeft);
                             channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, String.format(LINK_COOLDOWN, formattedLeft[1], formattedLeft[2]), false, sender)).queue();
-//                                    String.format(
-////                        "Подождите %02d минут(ы) %02d секунд(ы) перед использованием привязки снова", на всякий пусть будет
-//                                    "Подождите %d минут(ы) %d секунд(ы) перед использованием привязки снова",
-//                                    formattedLeft[1],
-//                                    formattedLeft[2])).queue();
                             return;
                         }
                         // Место для добавления кд!
@@ -101,6 +99,7 @@ public class DiscordLink extends ListenerAdapter {
                 channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, String.format(LINK_NO_ARGUMENTS, args.length - 1, Discord.PREFIX), true, sender)).queue();
                 return;
             }
+
             Player target = Bukkit.getPlayer(args[1]);
             // Если игрок не присутствует на сервере
             if (target != null && target.isOnline()) {
@@ -146,6 +145,28 @@ public class DiscordLink extends ListenerAdapter {
                 channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, LINK_NOT_FINISHED, false, sender)).queue();
                 return;
             }
+
+            // Отправка привязки в лс
+            try {
+                sender.openPrivateChannel().flatMap(privateChannel -> {
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle(LINK_TITLE);
+                    builder.setDescription(String.format(LINK_SENT, sender.getName(), target.getDisplayName()));
+                    builder.setColor(Formatter.hexColorToRGB(AstralThread.GREEN_COLOR));
+                    builder.setFooter(sender.getAsTag(), sender.getAvatarUrl());
+                    builder.setTimestamp(Instant.now());
+                    return privateChannel.sendMessageEmbeds(builder.build());
+                }).queue(message1 -> DM_DISABLED.remove(sender.getId()), throwable -> DM_DISABLED.add(sender.getId()));
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                System.out.println("Не удалось открыть ЛС пользователя. Ошибка в коде на строке " + new Throwable().getStackTrace()[0].getLineNumber());
+                return;
+            }
+            if (DM_DISABLED.contains(sender.getId())) {
+                channel.sendMessage("Бот не смог отправить вам сообщение в ЛС. Для взаимодействия бота откройте ЛС от участников сервера").queue();
+                return;
+            }
+
             // Обозначение незаконченной привязки
             UNFINISHED_LINKING.put(targetUUID, sender.getId());
             // Атомное значение типа логический для проверки на нажатые кнопки
@@ -178,13 +199,7 @@ public class DiscordLink extends ListenerAdapter {
                 builder.setFooter(sender.getAsTag(), sender.getAvatarUrl());
                 builder.setTimestamp(Instant.now());
                 // присылает эмбед в лс участнику
-                sender.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessageEmbeds(builder.build())).queue(null, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) {
-                        // Присылает эмбед в канал, если лс участника закрыта
-                        channel.sendMessageEmbeds(builder.build()).queue();
-                    }
-                });
+                sender.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessageEmbeds(builder.build())).queue();
                 // Данные для вноса в бд
                 Object[] userInfo = {target.getUniqueId(), target.getDisplayName(), sender.getId()};
                 Database.insertValues(userInfo, DATABASE_TABLE);
@@ -207,12 +222,7 @@ public class DiscordLink extends ListenerAdapter {
                 p.sendMessage(Formatter.colorize(String.format("&%sПривязка к аккаунту %s была отменена.", AstralThread.RED_COLOR, sender.getAsTag())));
                 sender.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessageEmbeds(errorEmbed(LINK_TITLE,
                         String.format(LINK_CANCELED, sender.getName(), target.getDisplayName()), true, sender))).
-                        queue(null, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) {
-                        channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, String.format(LINK_CANCELED, sender.getName(), target.getDisplayName()), true, sender)).queue();
-                    }
-                });
+                        queue();
                 // Обозначение завершения привязки
                 UNFINISHED_LINKING.remove(targetUUID);
                 clicked.set(true);
@@ -232,26 +242,13 @@ public class DiscordLink extends ListenerAdapter {
                 p.sendMessage(Formatter.colorize(String.format("&%sПопытки привязки от данного игрока более Вас не потревожат, модераторы получат уведомление о спаме.",
                         AstralThread.YELLOW_COLOR)));
                 sender.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessageEmbeds(
-                        errorEmbed(LINK_TITLE, String.format(LINK_CANCELED, target.getDisplayName()), true, sender))).queue(null, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) {
-                        channel.sendMessageEmbeds(errorEmbed(LINK_TITLE, String.format(LINK_CANCELED, target.getDisplayName()), true, sender)).queue();
-                    }
-                });
+                        errorEmbed(LINK_TITLE, String.format(LINK_SPAMMED, target.getDisplayName()), true, sender))).queue();
                 MINECRAFT_SPAM_MAP.put(sender.getId(), target.getUniqueId());
 
                 // Обозначение завершения привязки
                 UNFINISHED_LINKING.remove(targetUUID);
                 clicked.set(true);
             });
-
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setTitle(LINK_TITLE);
-            builder.setDescription(String.format(LINK_SENT, sender.getName(), target.getDisplayName()));
-            builder.setColor(Formatter.hexColorToRGB(AstralThread.GREEN_COLOR));
-            builder.setFooter(sender.getAsTag(), sender.getAvatarUrl());
-            builder.setTimestamp(Instant.now());
-            channel.sendMessageEmbeds(builder.build()).queue();
 
             TextComponent slash = new TextComponent(" / ");
             slash.setColor(ChatColor.of(AstralThread.GRAY_COLOR));
